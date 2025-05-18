@@ -15,7 +15,7 @@ def generate():
     if request.method == "POST":
         token = str(uuid.uuid4())[:12]
         valid_links[token] = time.time() + 300  # 5 minutes valid
-        return f"https://your-render-url.onrender.com/mobe_share?={token}"
+        return f"https://mobe-share-server.onrender.com/mobe_share?={token}"
     return "Only POST allowed"
 
 @app.route("/mobe_share")
