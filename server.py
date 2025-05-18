@@ -1,49 +1,45 @@
-from flask import Flask, request, redirect, render_template, abort, url_for
+from flask import Flask, request, abort, render_template_string, redirect
+import secrets
 import time
-import uuid
-import os
 
 app = Flask(__name__)
-valid_links = {}
+links = {}  # token: expiry
 
-@app.route("/")
-def home():
+@app.route('/')
+def root():
     return abort(403)
 
-@app.route("/generate", methods=["GET", "POST"])
+@app.route('/generate', methods=['GET'])
 def generate():
-    if request.method == "POST":
-        token = str(uuid.uuid4())[:12]
-        valid_links[token] = time.time() + 300  # 5 মিনিটের জন্য ভ্যালিড
-        return f"https://mobe-share-server.onrender.com/mobe_share?token={token}"
-    return "Only POST allowed"
+    token = secrets.token_urlsafe(8)
+    links[token] = time.time() + 120  # valid for 2 minutes
+    return redirect(f'/server?={token}')
 
-@app.route("/mobe_share")
-def mobe_share():
-    token = request.args.get("token")
-    if token in valid_links:
-        if time.time() < valid_links[token]:
-            return render_template("index.html", token=token)
+@app.route('/server')
+def serve():
+    token = request.args.get('')
+    current_time = time.time()
+
+    if token is None:
+        return abort(403)
+    
+    if token in links:
+        if current_time <= links[token]:
+            with open("index.html", "r") as f:
+                html = f.read().replace("{{token}}", token)
+            return render_template_string(html)
         else:
-            del valid_links[token]
-            return abort(404)
-    return abort(404)
+            return open("404.html").read(), 404
+    else:
+        return abort(403)
 
-@app.route("/server")
-def game_redirect():
-    token = request.args.get("token")
-    if token in valid_links and time.time() < valid_links[token]:
-        return redirect("https://www.mobe-game.rf.gd/game.html")
-    return abort(404)
+@app.route('/exit')
+def exit_server():
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func:
+        func()
+        return "Server Closed!"
+    return "Cannot shut down."
 
-@app.errorhandler(403)
-def forbidden(e):
-    return render_template("403.html"), 403
-
-@app.errorhandler(404)
-def not_found(e):
-    return render_template("404.html"), 404
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 1000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+if __name__ == '__main__':
+    app.run()
