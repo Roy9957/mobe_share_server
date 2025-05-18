@@ -1,6 +1,7 @@
 from flask import Flask, request, redirect, render_template, abort, url_for
 import time
 import uuid
+import os
 
 app = Flask(__name__)
 valid_links = {}
@@ -44,4 +45,5 @@ def not_found(e):
     return render_template("404.html"), 404
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 1000))
+    app.run(host="0.0.0.0", port=port, debug=True)
