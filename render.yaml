@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: mobe-share-server
+    env: python
+    buildCommand: ""
+    startCommand: "python server.py"
