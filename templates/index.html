@@ -1,50 +1,48 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Invite Portal</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8">
+  <title>Invite - Mobe Share</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(145deg, #0f0c29, #302b63, #24243e);
+      background: #121212;
       color: white;
+      font-family: 'Arial', sans-serif;
       text-align: center;
-      padding-top: 10%;
+      padding-top: 15%;
     }
-    .btn {
-      margin: 20px;
+    h1 {
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+    button {
       padding: 15px 30px;
       font-size: 18px;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      transition: 0.3s;
+      margin: 10px;
+      transition: 0.3s ease;
+      color: white;
     }
     .grant {
-      background-color: #28a745;
-      color: white;
+      background: #00c853;
+    }
+    .grant:hover {
+      background: #009624;
     }
     .exit {
-      background-color: #dc3545;
-      color: white;
+      background: #d50000;
     }
-    .btn:hover {
-      transform: scale(1.1);
+    .exit:hover {
+      background: #b71c1c;
     }
   </style>
 </head>
 <body>
-  <h1><i class="fas fa-share-alt"></i> Invitation Granted!</h1>
-  <p>Token: {{ token }}</p>
-  <button class="btn grant" onclick="window.location.href='/server?={{ token }}'">Grant Invitation</button>
-  <button class="btn exit" onclick="closeServer()">Exit</button>
-
-  <script>
-    function closeServer() {
-      fetch("/shutdown", { method: "POST" });
-      window.close();
-    }
-  </script>
+  <h1><i class="fas fa-share-square"></i> Invitation Token: <br><code>Mobe{{token}}</code></h1>
+  <button class="grant" onclick="window.location.href='/server?=Mobe{{token}}'">Grant Invitation</button>
+  <button class="exit" onclick="window.location.href='/exit'">Exit</button>
 </body>
 </html>
