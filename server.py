@@ -1,4 +1,3 @@
-
 from flask import Flask, request, redirect, render_template, abort, url_for
 import time
 import uuid
@@ -14,13 +13,13 @@ def home():
 def generate():
     if request.method == "POST":
         token = str(uuid.uuid4())[:12]
-        valid_links[token] = time.time() + 300  # 5 minutes valid
-        return f"https://mobe-share-server.onrender.com/mobe_share?={token}"
+        valid_links[token] = time.time() + 300  # 5 মিনিটের জন্য ভ্যালিড
+        return f"https://mobe-share-server.onrender.com/mobe_share?token={token}"
     return "Only POST allowed"
 
 @app.route("/mobe_share")
 def mobe_share():
-    token = request.args.get("")
+    token = request.args.get("token")
     if token in valid_links:
         if time.time() < valid_links[token]:
             return render_template("index.html", token=token)
@@ -31,7 +30,7 @@ def mobe_share():
 
 @app.route("/server")
 def game_redirect():
-    token = request.args.get("")
+    token = request.args.get("token")
     if token in valid_links and time.time() < valid_links[token]:
         return redirect("https://www.mobe-game.rf.gd/game.html")
     return abort(404)
